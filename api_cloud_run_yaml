@@ -1,0 +1,62 @@
+swagger: "2.0"
+info:
+  title: visitors
+  description: Visitors API on API Gateway with a Cloud Run backend
+  version: 1.0.0
+schemes:
+  - https
+produces:
+  - application/json
+x-google-backend:
+  address: https://cloudrun-btpc7fnekq-ey.a.run.app
+x-google-endpoints:
+  - name: https://res-gw-4tszy005.ew.gateway.dev
+    allowCors: True
+paths:
+  /index:
+    get:
+      summary: Cloud Run Visitors count
+      operationId: read_visitor
+      responses:
+        "200":
+          description: A successful read of visitor counts
+          schema:
+            type: object
+            properties:
+              v_count:
+                type: string
+              page_count:
+                type: string
+    post:
+      operationId: update_visitor
+      summary: Update visitor count
+      responses:
+        "204":
+          description: Successfully updated visitor count
+          schema:
+            type: object
+            properties:
+              v_count:
+                type: string
+              page_count:
+                type: string
+        "400":
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+        "500":
+          description: Internal error
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    options:
+      summary: CORS pre-flight
+      operationId: cors_visitor
+      responses:
+        "200":
+          description: A successful response
