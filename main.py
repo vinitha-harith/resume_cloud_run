@@ -52,12 +52,15 @@ def read_visitor():
 @app.route('/index', methods=['POST'])
 def update_visitor():
     tmp = str(request.environ.get('HTTP_X_FORWARDED_FOR'))
-    client_ip = tmp
-    # if "," in tmp:
-    #     client_ip, fwd_ip = tmp.split(",")
-    # else:
-    #     client_ip = ""
-    #     fwd_ip = ""
+    comma_count = tmp.count(",")
+
+    if "," in tmp and comma_count == 1:
+        client_ip, fwd_ip = tmp.split(",")
+    elif "," in tmp and comma_count > 1:
+        client_ip = tmp.split(",")[0]
+    else:
+        client_ip = tmp
+        fwd_ip = ""
 
     # query_remote_ip = client.query(kind='Visitors-ip')
     # query_fwd = client.query(kind='Visitors-ip')
@@ -77,7 +80,7 @@ def update_visitor():
     visitors_ip["remote_ip"] = request.remote_addr
     visitors_ip["forwarded_ip"] = request.environ.get('HTTP_X_FORWARDED_FOR')
     visitors_ip["update_ts"] = datetime.now()
-    visitors_ip["client_ip"] = tmp  # client_ip
+    visitors_ip["client_ip"] = client_ip
     client.put(visitors_ip)
 
     key = client.key('Visitors', 'vid')
